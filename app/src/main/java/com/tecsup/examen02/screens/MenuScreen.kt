@@ -1,14 +1,20 @@
 package com.tecsup.examen02.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,6 +24,8 @@ import com.tecsup.examen02.data.listaPlatos
 @Composable
 fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
 
+    val verdeOscuro = Color(0xFF1B5E20)
+    val verdeMedio = Color(0xFF388E3C)
     val categorias = listOf("Todos", "Entradas", "Platos de Fondo", "Postres", "Bebidas")
     var categoriaSeleccionada by remember { mutableStateOf("Todos") }
 
@@ -30,40 +38,125 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Menú") },
+                title = { 
+                    Text(
+                        "Nuestra Carta", 
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                            contentDescription = "Atrás",
+                            tint = Color.White
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = verdeOscuro
+                )
             )
-        }
+        },
+        containerColor = Color.White
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
-            LazyRow(modifier = Modifier.padding(8.dp)) {
+            // Categorías con Chips
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(categorias) { categoria ->
+                    val seleccionado = categoriaSeleccionada == categoria
                     FilterChip(
-                        selected = categoriaSeleccionada == categoria,
+                        selected = seleccionado,
                         onClick = { categoriaSeleccionada = categoria },
                         label = { Text(categoria) },
-                        modifier = Modifier.padding(horizontal = 4.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        border = if (seleccionado) null else BorderStroke(1.dp, verdeOscuro),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = verdeOscuro,
+                            selectedLabelColor = Color.White,
+                            labelColor = verdeOscuro
+                        )
                     )
                 }
             }
 
-            LazyColumn {
+            // Lista de Platos
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 items(platosFiltrados) { plato ->
                     Card(
                         onClick = { onPlatoClick(plato.id) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = plato.nombre, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                            Text(text = plato.descripcionCorta, fontSize = 14.sp)
-                            Text(text = "S/. ${plato.precio}", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min) // Para que la barra lateral ocupe toda la altura
+                        ) {
+                            // Franja decorativa izquierda
+                            Box(
+                                modifier = Modifier
+                                    .width(6.dp)
+                                    .fillMaxHeight()
+                                    .background(verdeOscuro)
+                            )
+                            
+                            Row(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = plato.nombre, 
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = verdeOscuro
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = plato.descripcionCorta, 
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Gray,
+                                        maxLines = 2
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "S/. ${String.format("%.2f", plato.precio)}", 
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = verdeMedio
+                                    )
+                                }
+                                
+                                // Placeholder para imagen pequeña
+                                Box(
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color(0xFFF1F8E9)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "🍽️",
+                                        fontSize = 32.sp
+                                    )
+                                }
+                            }
                         }
                     }
                 }

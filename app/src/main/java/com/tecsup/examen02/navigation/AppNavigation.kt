@@ -17,11 +17,13 @@ fun AppNavigation() {
     val navController = rememberNavController()
     var pedido by remember { mutableStateOf(mapOf<Int, Int>()) }
     var correoUsuario by remember { mutableStateOf("") }
+    var correoCompleto by remember { mutableStateOf("") }
 
     NavHost(navController = navController, startDestination = "login") {
 
         composable("login") {
             LoginScreen(onLoginExitoso = { correo ->
+                correoCompleto = correo
                 correoUsuario = correo.substringBefore("@")
                 navController.navigate("home")
             })
@@ -72,7 +74,13 @@ fun AppNavigation() {
 
         composable("perfil") {
             PerfilScreen(
-                onBack = { navController.popBackStack() }
+                correo = correoCompleto,
+                onBack = { navController.popBackStack() },
+                onCerrarSesion = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
             )
         }
     }
