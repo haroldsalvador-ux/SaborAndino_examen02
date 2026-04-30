@@ -14,10 +14,35 @@ import com.tecsup.examen02.data.listaPlatos
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Unit) {
+fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Unit, onVerCarrito: () -> Unit) {
 
     val plato = listaPlatos.find { it.id == platoId }
     var cantidad by remember { mutableStateOf(1) }
+    var mostrarDialogo by remember { mutableStateOf(false) }
+
+    if (mostrarDialogo) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogo = false },
+            title = { Text("¡Agregado al pedido!") },
+            text = { Text("¿Qué deseas hacer?") },
+            confirmButton = {
+                Button(onClick = {
+                    mostrarDialogo = false
+                    onVerCarrito()
+                }) {
+                    Text("Ver mi pedido")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = {
+                    mostrarDialogo = false
+                    onBack()
+                }) {
+                    Text("Seguir comprando")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -40,7 +65,7 @@ fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Uni
             ) {
                 Text(text = plato.nombre, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = plato.descripcion, fontSize = 16.sp)
+                Text(text = plato.descripcionDetallada, fontSize = 16.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "S/. ${plato.precio}", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
                 Spacer(modifier = Modifier.height(24.dp))
@@ -57,7 +82,10 @@ fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Uni
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { onAgregar(plato.id, cantidad) },
+                    onClick = {
+                        onAgregar(plato.id, cantidad)
+                        mostrarDialogo = true
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Agregar al pedido")

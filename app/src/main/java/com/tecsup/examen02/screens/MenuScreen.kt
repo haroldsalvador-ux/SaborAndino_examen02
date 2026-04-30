@@ -62,7 +62,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(text = plato.nombre, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                            Text(text = plato.descripcion, fontSize = 14.sp)
+                            Text(text = plato.descripcionCorta, fontSize = 14.sp)
                             Text(text = "S/. ${plato.precio}", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }

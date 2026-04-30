@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(
+    correo: String,
     onVerMenu: () -> Unit,
     onVerPedido: () -> Unit,
     onVerPerfil: () -> Unit
@@ -23,7 +24,7 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-        Text(text = "¡Hola, bienvenido!", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(text = "¡Hola, $correo!", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(8.dp))
 

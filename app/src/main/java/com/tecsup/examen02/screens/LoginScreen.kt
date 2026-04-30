@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoginScreen(onLoginExitoso: () -> Unit) {
+fun LoginScreen(onLoginExitoso: (String) -> Unit) {
 
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
@@ -60,10 +60,11 @@ fun LoginScreen(onLoginExitoso: () -> Unit) {
 
         Button(
             onClick = {
-                if (correo.isEmpty() || contrasena.isEmpty()) {
-                    error = "Por favor completa todos los campos"
-                } else {
-                    onLoginExitoso()
+                when {
+                    correo.isBlank()    ->error = "Ingrese su correo"
+                    !correo.contains("@gmail") ->error = "Ingrese un correo válido"
+                    contrasena.length < 4 ->error = "Ingrese una contraseña válida de 4 caracteres"
+                    else -> onLoginExitoso(correo)
                 }
             },
             modifier = Modifier.fillMaxWidth()
