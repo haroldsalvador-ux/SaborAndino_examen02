@@ -18,14 +18,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecsup.examen02.data.listaPlatos
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Unit) {
+fun MiPedidoScreen(
+    pedido: Map<Int, Int>,
+    onBack: () -> Unit,
+    onPagar: () -> Unit,
+    onRestar: (Int) -> Unit,
+    onSumar: (Int) -> Unit
+) {
 
-    val verdeOscuro = Color(0xFF1B5E20)
-    val verdeMedio = Color(0xFF388E3C)
-    val verdeMuyClaro = Color(0xFFF1F8E9)
+    val azulOscuro = Color(0xFF1565C0)
+    val azulMedio = Color(0xFF1976D2)
+    val azulMuyClaro = Color(0xFFE8F4FD)
 
     val total = pedido.entries.sumOf { (id, cantidad) ->
         val plato = listaPlatos.find { it.id == id }
@@ -37,7 +44,7 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
     if (mostrarConfirmacion) {
         AlertDialog(
             onDismissRequest = { mostrarConfirmacion = false },
-            title = { Text("¡Pedido confirmado!", fontWeight = FontWeight.Bold, color = verdeOscuro) },
+            title = { Text("¡Pedido confirmado!", fontWeight = FontWeight.Bold, color = azulOscuro) },
             text = { Text("Tu orden está siendo preparada con el auténtico sabor peruano. ¡Gracias por tu preferencia!") },
             confirmButton = {
                 Button(
@@ -45,7 +52,7 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                         mostrarConfirmacion = false
                         onPagar()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = verdeOscuro),
+                    colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("Aceptar")
@@ -63,14 +70,14 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Atrás",
                             tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = verdeOscuro
+                    containerColor = azulOscuro
                 )
             )
         },
@@ -101,7 +108,7 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
                             onClick = onBack,
-                            colors = ButtonDefaults.buttonColors(containerColor = verdeOscuro),
+                            colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Text("Ver nuestra carta")
@@ -113,9 +120,9 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                     text = "Resumen de platos",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = verdeOscuro
+                    color = azulOscuro
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 LazyColumn(modifier = Modifier.weight(1f)) {
@@ -133,14 +140,13 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                                 Row(
                                     modifier = Modifier.height(IntrinsicSize.Min)
                                 ) {
-                                    // Franja verde lateral
                                     Box(
                                         modifier = Modifier
                                             .width(6.dp)
                                             .fillMaxHeight()
-                                            .background(verdeOscuro)
+                                            .background(azulOscuro)
                                     )
-                                    
+
                                     Row(
                                         modifier = Modifier
                                             .padding(16.dp)
@@ -149,24 +155,33 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                text = plato.nombre, 
+                                                text = plato.nombre,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 18.sp,
                                                 color = Color.Black
                                             )
                                             Text(
-                                                text = "Cantidad: $cantidad", 
-                                                color = verdeMedio,
+                                                text = "Cantidad: $cantidad",
+                                                color = azulMedio,
                                                 fontWeight = FontWeight.SemiBold
                                             )
                                         }
-                                        
-                                        Text(
-                                            text = "S/. ${String.format("%.2f", plato.precio * cantidad)}",
-                                            fontWeight = FontWeight.ExtraBold,
-                                            fontSize = 18.sp,
-                                            color = verdeOscuro
-                                        )
+
+                                        // Botones sumar y restar
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            IconButton(onClick = { onRestar(id) }) {
+                                                Text("-", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = azulOscuro)
+                                            }
+                                            Text(
+                                                text = "$cantidad",
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.Black
+                                            )
+                                            IconButton(onClick = { onSumar(id) }) {
+                                                Text("+", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = azulOscuro)
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -175,12 +190,11 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
-                
-                // Card Resumen Total
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = verdeMuyClaro),
+                    colors = CardDefaults.cardColors(containerColor = azulMuyClaro),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(24.dp)) {
@@ -190,36 +204,36 @@ fun MiPedidoScreen(pedido: Map<Int, Int>, onBack: () -> Unit, onPagar: () -> Uni
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Total a Pagar", 
+                                text = "Total a Pagar",
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.Black
                             )
                             Text(
-                                text = "S/. ${String.format("%.2f", total)}", 
+                                text = "S/. ${String.format(Locale.US, "%.2f", total)}",
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = verdeOscuro
+                                color = azulOscuro
                             )
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Button(
                     onClick = { mostrarConfirmacion = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = verdeOscuro),
+                    colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
                     Icon(imageVector = Icons.Default.Payment, contentDescription = null)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        "PAGAR PEDIDO", 
-                        fontSize = 18.sp, 
+                        "PAGAR PEDIDO",
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }

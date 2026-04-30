@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit) {
     val verdeOscuro = Color(0xFF1B5E20)
-    val verdeClaro = Color(0xFFC8E6C9)
+    val verdeMuyClaro = Color(0xFFE8F5E9)
     val nombreUsuario = correo.substringBefore("@")
     val nombreFormateado = nombreUsuario.replaceFirstChar { it.uppercase() }
     val inicial = nombreUsuario.take(1).uppercase()
@@ -61,7 +61,7 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
             Surface(
                 modifier = Modifier.size(120.dp),
                 shape = CircleShape,
-                color = verdeClaro
+                color = verdeMuyClaro
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(

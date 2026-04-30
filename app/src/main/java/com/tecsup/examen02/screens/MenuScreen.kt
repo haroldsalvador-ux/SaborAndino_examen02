@@ -24,8 +24,8 @@ import com.tecsup.examen02.data.listaPlatos
 @Composable
 fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
 
-    val verdeOscuro = Color(0xFF1B5E20)
-    val verdeMedio = Color(0xFF388E3C)
+    val naranjaOscuro = Color(0xFFE65100)
+    val naranjaMedio = Color(0xFFFB8C00)
     val categorias = listOf("Todos", "Entradas", "Platos de Fondo", "Postres", "Bebidas")
     var categoriaSeleccionada by remember { mutableStateOf("Todos") }
 
@@ -55,7 +55,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = verdeOscuro
+                    containerColor = naranjaOscuro
                 )
             )
         },
@@ -78,11 +78,11 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                         onClick = { categoriaSeleccionada = categoria },
                         label = { Text(categoria) },
                         shape = RoundedCornerShape(12.dp),
-                        border = if (seleccionado) null else BorderStroke(1.dp, verdeOscuro),
+                        border = if (seleccionado) null else BorderStroke(1.dp, naranjaOscuro),
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = verdeOscuro,
+                            selectedContainerColor = naranjaOscuro,
                             selectedLabelColor = Color.White,
-                            labelColor = verdeOscuro
+                            labelColor = naranjaOscuro
                         )
                     )
                 }
@@ -111,7 +111,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                                 modifier = Modifier
                                     .width(6.dp)
                                     .fillMaxHeight()
-                                    .background(verdeOscuro)
+                                    .background(naranjaOscuro)
                             )
                             
                             Row(
@@ -125,7 +125,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                                         text = plato.nombre, 
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
-                                        color = verdeOscuro
+                                        color = naranjaOscuro
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
@@ -139,7 +139,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                                         text = "S/. ${String.format("%.2f", plato.precio)}", 
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.ExtraBold,
-                                        color = verdeMedio
+                                        color = naranjaMedio
                                     )
                                 }
                                 
@@ -148,7 +148,7 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                                     modifier = Modifier
                                         .size(70.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(Color(0xFFF1F8E9)),
+                                        .background(Color(0xFFFFF3E0)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(

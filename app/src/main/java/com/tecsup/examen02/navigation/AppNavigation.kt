@@ -68,6 +68,20 @@ fun AppNavigation() {
                     navController.navigate("home") {
                         popUpTo("home") { inclusive = true }
                     }
+                },
+                onRestar = { id ->
+                    val nuevoPedido = pedido.toMutableMap()
+                    if ((nuevoPedido[id] ?: 0) > 1) {
+                        nuevoPedido[id] = (nuevoPedido[id] ?: 0) - 1
+                    } else {
+                        nuevoPedido.remove(id)
+                    }
+                    pedido = nuevoPedido
+                },
+                onSumar = { id ->
+                    val nuevoPedido = pedido.toMutableMap()
+                    nuevoPedido[id] = (nuevoPedido[id] ?: 0) + 1
+                    pedido = nuevoPedido
                 }
             )
         }
