@@ -6,6 +6,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.DinnerDining
+import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,8 +30,8 @@ fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Uni
     var cantidad by remember { mutableStateOf(1) }
     var mostrarDialogo by remember { mutableStateOf(false) }
 
-    val verdeOscuro = Color(0xFF1B5E20)
-    val verdeMedio = Color(0xFF388E3C)
+    val verdeOscuro = Color(0xFFF44336)
+    val verdeMedio = Color(0xFFF44336)
     val verdeMuyClaro = Color(0xFFF1F8E9)
     val verdeClaro = Color(0xFFC8E6C9)
 
@@ -91,19 +94,27 @@ fun DetalleScreen(platoId: Int, onAgregar: (Int, Int) -> Unit, onBack: () -> Uni
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Box de imagen superior
+                // Box de imagen superior con color según categoría
+                val (bgColor, iconColor, icon) = when (plato.categoria) {
+                    "Entradas" -> Triple(Color(0xFFFFE0B2), Color(0xFFE65100), Icons.Default.Restaurant)
+                    "Platos de Fondo" -> Triple(Color(0xFFFFCDD2), Color(0xFFB71C1C), Icons.Default.DinnerDining)
+                    "Postres" -> Triple(Color(0xFFFCE4EC), Color(0xFF880E4F), Icons.Default.Cake)
+                    "Bebidas" -> Triple(Color(0xFFE3F2FD), Color(0xFF0D47A1), Icons.Default.LocalDrink)
+                    else -> Triple(Color.LightGray, Color.DarkGray, Icons.Default.Restaurant)
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)
-                        .background(verdeClaro),
+                        .height(200.dp)
+                        .background(bgColor),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Restaurant,
+                        imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(100.dp),
-                        tint = verdeOscuro
+                        modifier = Modifier.size(64.dp),
+                        tint = iconColor
                     )
                 }
 

@@ -25,8 +25,12 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
     val verdeOscuro = Color(0xFF1B5E20)
     val verdeMuyClaro = Color(0xFFE8F5E9)
     val nombreUsuario = correo.substringBefore("@")
-    val nombreFormateado = nombreUsuario.replaceFirstChar { it.uppercase() }
-    val inicial = nombreUsuario.take(1).uppercase()
+    val nombreFormateado = if (nombreUsuario.isNotEmpty()) {
+        nombreUsuario.replaceFirstChar { it.uppercase() }
+    } else {
+        "Usuario"
+    }
+    val inicial = if (nombreUsuario.isNotEmpty()) nombreUsuario.take(1).uppercase() else "U"
 
     Scaffold(
         containerColor = Color.White,
@@ -57,7 +61,6 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Avatar Section
             Surface(
                 modifier = Modifier.size(120.dp),
                 shape = CircleShape,
@@ -67,7 +70,7 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
                     Text(
                         text = inicial,
                         fontSize = 48.sp,
-                        color = Color.White,
+                        color = verdeOscuro,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -81,7 +84,7 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
                 fontWeight = FontWeight.Bold,
                 color = verdeOscuro
             )
-            
+
             Text(
                 text = correo,
                 fontSize = 16.sp,
@@ -90,7 +93,6 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Information Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -98,11 +100,11 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    ProfileRow(icon = Icons.Default.Person, label = "Nombre", value = nombreFormateado, iconColor = verdeOscuro)
+                    ProfileInfoRow(icon = Icons.Default.Person, label = "Nombre", value = nombreFormateado, iconColor = verdeOscuro)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 0.5.dp, color = Color.LightGray)
-                    ProfileRow(icon = Icons.Default.Email, label = "Correo completo", value = correo, iconColor = verdeOscuro)
+                    ProfileInfoRow(icon = Icons.Default.Email, label = "Correo completo", value = correo, iconColor = verdeOscuro)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 0.5.dp, color = Color.LightGray)
-                    ProfileRow(icon = Icons.Default.Phone, label = "Teléfono", value = "+51 987 654 321", iconColor = verdeOscuro)
+                    ProfileInfoRow(icon = Icons.Default.Phone, label = "Teléfono", value = "+51 987 654 321", iconColor = verdeOscuro)
                 }
             }
 
@@ -132,14 +134,14 @@ fun PerfilScreen(correo: String, onBack: () -> Unit, onCerrarSesion: () -> Unit)
             ) {
                 Text("CERRAR SESIÓN", fontWeight = FontWeight.Bold)
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun ProfileRow(icon: ImageVector, label: String, value: String, iconColor: Color) {
+fun ProfileInfoRow(icon: ImageVector, label: String, value: String, iconColor: Color) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -150,9 +152,9 @@ fun ProfileRow(icon: ImageVector, label: String, value: String, iconColor: Color
             tint = iconColor,
             modifier = Modifier.size(24.dp)
         )
-        
+
         Spacer(modifier = Modifier.width(16.dp))
-        
+
         Column {
             Text(
                 text = label,

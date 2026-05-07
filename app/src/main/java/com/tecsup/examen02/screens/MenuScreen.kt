@@ -9,6 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.DinnerDining
+import androidx.compose.material.icons.filled.LocalDrink
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -103,59 +107,57 @@ fun MenuScreen(onPlatoClick: (Int) -> Unit, onBack: () -> Unit) {
                     ) {
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min) // Para que la barra lateral ocupe toda la altura
+                                .padding(12.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Franja decorativa izquierda
+                            // Box que simula imagen según categoría
+                            val (bgColor, iconColor, icon) = when (plato.categoria) {
+                                "Entradas" -> Triple(Color(0xFFFFE0B2), Color(0xFFE65100), Icons.Default.Restaurant)
+                                "Platos de Fondo" -> Triple(Color(0xFFFFCDD2), Color(0xFFB71C1C), Icons.Default.DinnerDining)
+                                "Postres" -> Triple(Color(0xFFFCE4EC), Color(0xFF880E4F), Icons.Default.Cake)
+                                "Bebidas" -> Triple(Color(0xFFE3F2FD), Color(0xFF0D47A1), Icons.Default.LocalDrink)
+                                else -> Triple(Color.LightGray, Color.DarkGray, Icons.Default.Restaurant)
+                            }
+                            
                             Box(
                                 modifier = Modifier
-                                    .width(6.dp)
-                                    .fillMaxHeight()
-                                    .background(naranjaOscuro)
-                            )
-                            
-                            Row(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(bgColor),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = plato.nombre, 
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = naranjaOscuro
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = plato.descripcionCorta, 
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Gray,
-                                        maxLines = 2
-                                    )
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(
-                                        text = "S/. ${String.format("%.2f", plato.precio)}", 
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = naranjaMedio
-                                    )
-                                }
-                                
-                                // Placeholder para imagen pequeña
-                                Box(
-                                    modifier = Modifier
-                                        .size(70.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(Color(0xFFFFF3E0)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "🍽️",
-                                        fontSize = 32.sp
-                                    )
-                                }
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp),
+                                    tint = iconColor
+                                )
+                            }
+                            
+                            Spacer(modifier = Modifier.width(16.dp))
+                            
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = plato.nombre, 
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = naranjaOscuro
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = plato.descripcionCorta, 
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Gray,
+                                    maxLines = 2
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "S/. ${String.format("%.2f", plato.precio)}", 
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = naranjaMedio
+                                )
                             }
                         }
                     }

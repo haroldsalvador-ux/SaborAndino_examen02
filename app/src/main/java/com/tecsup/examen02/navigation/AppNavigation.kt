@@ -1,31 +1,26 @@
 package com.tecsup.examen02.navigation
 
 import androidx.compose.runtime.*
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.tecsup.examen02.screens.LoginScreen
-import com.tecsup.examen02.screens.HomeScreen
-import com.tecsup.examen02.screens.MenuScreen
-import com.tecsup.examen02.screens.DetalleScreen
-import com.tecsup.examen02.screens.PerfilScreen
-import com.tecsup.examen02.screens.MiPedidoScreen
+import androidx.navigation.navArgument
+import com.tecsup.examen02.screens.*
 
 @Composable
 fun AppNavigation() {
-
     val navController = rememberNavController()
-    var pedido by remember { mutableStateOf(mapOf<Int, Int>()) }
     var correoUsuario by remember { mutableStateOf("") }
-    var correoCompleto by remember { mutableStateOf("") }
+    var pedido by remember { mutableStateOf(mapOf<Int, Int>()) }
 
     NavHost(navController = navController, startDestination = "login") {
-
         composable("login") {
             LoginScreen(onLoginExitoso = { correo ->
-                correoCompleto = correo
-                correoUsuario = correo.substringBefore("@")
-                navController.navigate("home")
+                correoUsuario = correo
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
             })
         }
 
@@ -33,66 +28,70 @@ fun AppNavigation() {
             HomeScreen(
                 correo = correoUsuario,
                 onVerMenu = { navController.navigate("menu") },
-                onVerPedido = { navController.navigate("mipedido") },
+                onVerPedido = { navController.navigate("pedido") },
                 onVerPerfil = { navController.navigate("perfil") }
             )
         }
 
         composable("menu") {
             MenuScreen(
-                onPlatoClick = { id -> navController.navigate("detalle/$id") },
+                onPlatoClick = { platoId ->
+                    navController.navigate("detalle/$platoId")
+                },
                 onBack = { navController.popBackStack() }
             )
         }
 
-        composable("detalle/{platoId}") { backStackEntry ->
-            val platoId = backStackEntry.arguments?.getString("platoId")?.toInt() ?: 1
+        composable(
+            route = "detalle/{platoId}",
+            arguments = listOf(navArgument("platoId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val platoId = backStackEntry.arguments?.getInt("platoId") ?: 0
             DetalleScreen(
                 platoId = platoId,
-                onAgregar = { id, cantidad ->
-                    val nuevoPedido = pedido.toMutableMap()
-                    nuevoPedido[id] = (nuevoPedido[id] ?: 0) + cantidad
-                    pedido = nuevoPedido
+                onAgregar = { id, cant ->
+                    val nuevaCantidad = (pedido[id] ?: 0) + cant
+                    pedido = pedido + (id to nuevaCantidad)
                 },
                 onBack = { navController.popBackStack() },
-                onVerCarrito = { navController.navigate("mipedido") }
+                onVerCarrito = { navController.navigate("pedido") }
             )
         }
 
-        composable("mipedido") {
+        composable("pedido") {
             MiPedidoScreen(
                 pedido = pedido,
                 onBack = { navController.popBackStack() },
                 onPagar = {
-                    pedido = mapOf()
+                    pedido = emptyMap()
                     navController.navigate("home") {
                         popUpTo("home") { inclusive = true }
                     }
                 },
                 onRestar = { id ->
-                    val nuevoPedido = pedido.toMutableMap()
-                    if ((nuevoPedido[id] ?: 0) > 1) {
-                        nuevoPedido[id] = (nuevoPedido[id] ?: 0) - 1
+                    val cantActual = pedido[id] ?: 0
+                    if (cantActual > 1) {
+                        pedido = pedido + (id to cantActual - 1)
                     } else {
-                        nuevoPedido.remove(id)
+                        pedido = pedido - id
                     }
-                    pedido = nuevoPedido
                 },
                 onSumar = { id ->
-                    val nuevoPedido = pedido.toMutableMap()
-                    nuevoPedido[id] = (nuevoPedido[id] ?: 0) + 1
-                    pedido = nuevoPedido
+                    val cantActual = pedido[id] ?: 0
+                    pedido = pedido + (id to cantActual + 1)
                 }
             )
         }
 
         composable("perfil") {
             PerfilScreen(
-                correo = correoCompleto,
+                correo = correoUsuario,
                 onBack = { navController.popBackStack() },
                 onCerrarSesion = {
+                    correoUsuario = ""
+                    pedido = emptyMap()
                     navController.navigate("login") {
-                        popUpTo("home") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )
